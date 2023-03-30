@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const usuarios = require("./usuarios.json");
+const clientes = require("./clientes.json");
 
 app.use(express.json());
 
@@ -56,5 +57,57 @@ app.get("/users/filtro/:id", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("o servidor está no ar");
+  console.log("Yara está on-line");
+});
+
+/* CRUD CLIENTE */
+app.get("/client", (req, res) => {
+  res.status(200).json(cliente);
+});
+
+app.get("/client/:id/:idPedido", (req, res) => {
+  const { id } = req.params;
+  const cliente = clientes.find((client) => client.id == id);
+  if (typeof cliente == "undefined") {
+    res.status(404).json({});
+  } else {
+    res.status(200).json(cliente);
+  }
+});
+
+app.post("/client", (req, res) => {
+  const { id, nome, idPedido } = req.body;
+  clientes.push({ id: id, nome: nome, idPedido: idPedido });
+  res.status(200).json();
+});
+
+app.put("/client/:idPedido", (req, res) => {
+  const { id, nome, idPedido } = req.body;
+  const cliente = clientes.find((client) => client.id == id);
+  if (!cliente) {
+    res.status(404).json({ msg: "registro não encontrado" });
+  } else {
+    cliente.idPedido = idPedido;
+    res.status(200).json({ msg: "usuário atualizado" });
+  }
+});
+
+app.delete("/client/:id/:idPedido", (req, res) => {
+  const {id, idPedido} = req.params;
+  const cliente = clientes.find( client => client.id == id)
+  if (!cliente) {
+    res.status(404).json({ msg: "registro não encontrado" });
+  } else {
+    clientes.splice(0, 1,  id, idPedido);
+    res.status(200).json({ msg: "usuário excluido" });
+  }
+});
+
+app.get("/client/filtro/:id", (req, res) => {
+  const {id, idPedido} = req.params;
+  const cliente = clientes.filter( client => client.id != id );
+  console.log(cliente);
+  console.log("---------------");
+  console.log(clientes);
+
 });
